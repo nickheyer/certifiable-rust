@@ -1,6 +1,7 @@
 # certifiable-rust
 A tag-along repository for all the projects in the Rust "book".
 
+
 ## Information
 
 <b>Based on: https://rust-book.cs.brown.edu/</b>
@@ -13,3 +14,5 @@ A tag-along repository for all the projects in the Rust "book".
 
 ## Disclaimers
 - I am not Rust professional by any stretch of the word. 
+
+
