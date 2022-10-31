@@ -104,4 +104,35 @@ let mut guess = String::new();
     ```rust
     let secret_number = rand::thread_rng().gen_range(1..=100);
     ```
-27. 
+27. `.cmp()` returns an enum of Ordering. When used with `match`, it is looking for a matching enum type in the following curly brackets. See below code:
+    ```rust 
+    match guess.cmp(&secret_number) {
+            Ordering::Less => println!("Too small!"),
+            Ordering::Greater => println!("Too big!"),
+            Ordering::Equal => println!("You win!"),
+        }
+    ```
+28. Converting strings to numbers can be done with the following code:
+    ```rust
+    let guess: u32 = guess.trim().parse().expect("Please type a number!");
+    ```
+29. In the above code, the steps taken are as follows:
+    ```
+    guess (string) -> trim whitespace -> attempt to parse string to integer (unsigned 32 bit) -> if unable to parse, raise exception (panic!) -> guess is redefined as a 32 bit unsigned integer
+    ```
+30. The `.parse()` method infers the type to be parsed by the type of variable it is being saved to? Needs clarification.
+31. Similar to a `while(true)` loop in C or Python, the syntax `loop {}` causes an infinite loop in Rust.
+32. Loops can be broken with the `break` keyword just like in C and Python. 
+33. To allow for errors in number input, and to prompt the user for another try, we can convert the `guess` variable into a match expression as follows:
+    ```rust
+    let guess: u32 = match guess.trim().parse() {
+                Ok(num) => num,
+                Err(_) => {
+                    println!("This is not a number! Try again...");
+                    continue;
+                },
+            };
+    ```
+34. In the above match expression, we are once again *trim*ming and *parse*ing the `guess` input. Parse returns either an Ok or Err enum, and we use `match` expression to tell the program which *arm* the code needs to flow through. 
+35. If the returned enum from the *parse* method is `Ok`, we pass `num` (which is a tmp variable, think lambda in Python) to guess. 
+36. If the returned enum from *parse* is Err, we capture `_` instead of `num`. `_` (underscore) is a catch-all value. 
