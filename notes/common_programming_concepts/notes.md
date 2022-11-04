@@ -70,6 +70,130 @@ fn main() {
 }
 ```
 
+#### Functions
+```rust
+fn main() {
+    println!("Hello, world!");
+
+    another_function();
+}
+
+fn another_function() {
+    println!("Another function.");
+}
+```
+
+#### Parameters
+```rust
+fn main() {
+    another_function(5);
+}
+
+fn another_function(x: i32) {
+    println!("The value of x is: {x}");
+}
+```
+#### Multiple Parameters
+```rust
+fn main() {
+    print_labeled_measurement(5, 'h');
+}
+
+fn print_labeled_measurement(value: i32, unit_label: char) {
+    println!("The measurement is: {value}{unit_label}");
+}
+```
+
+#### Expressions to Variables
+```rust
+fn main() {
+    let y = {
+        let x = 3;
+        x + 1
+    };
+
+    println!("The value of y is: {y}"); //prints 4
+}
+```
+#### Returning values from Functions
+```rust
+fn five() -> i32 {
+    5
+}
+
+fn main() {
+    let x = five();
+
+    println!("The value of x is: {x}"); //The value of x is 5
+}
+```
+
+#### Returning from Function w/ Params
+```rust
+fn main() {
+    let x = plus_one(5);
+
+    println!("The value of x is: {x}");
+}
+
+fn plus_one(x: i32) -> i32 {
+    x + 1
+}
+```
+#### Control Flow w/ if Expressions 
+```rust
+fn main() {
+    let number = 3;
+
+    if number < 5 {
+        println!("condition was true");
+    } else {
+        println!("condition was false");
+    }
+}
+```
+
+#### Multiple Conditions w/ if else
+```rust
+fn main() {
+    let number = 6;
+
+    if number % 4 == 0 {
+        println!("number is divisible by 4");
+    } else if number % 3 == 0 {
+        println!("number is divisible by 3");
+    } else if number % 2 == 0 {
+        println!("number is divisible by 2");
+    } else {
+        println!("number is not divisible by 4, 3, or 2");
+    }
+}
+```
+#### Infinite loop
+```rust
+fn main() {
+    loop {
+        println!("again!");
+    }
+}
+```
+
+#### Returning Values from Loops
+```rust
+fn main() {
+    let mut counter = 0;
+
+    let result = loop {
+        counter += 1;
+
+        if counter == 10 {
+            break counter * 2;
+        }
+    };
+
+    println!("The result is {result}");
+}
+```
 
 # Notes
 
@@ -134,4 +258,107 @@ fn main() {
     let b = [3; 5]; //[3, 3, 3, 3, 3]
     ```
 23. If you don't know the size of the array, use a vector instead (I wish C had this!)
-24. 
+24. Function and variable naming convention uses *snake case*, ie: `some_variable = "test`.
+25. In rust, you can define functions anywhere within your code, as long as it's in scope. Whereas in C, a function must be defined before main, or declared, or within a header file. 
+26. In function *signatures*, you must declare the type of paramenter. ie: `fn another_function(x: i32){}`.
+27. Multiple parameters are seperated by a comma, ie: `fn print_labeled_measurement(value: i32, unit_label: char)`.
+28. Functions that return a value must declare the return type with `->` operator, ie: `fn five() -> i32`.
+29. Comments should be placed above code that is being annotated. 
+    ```rust
+    fn main() {
+    // I’m feeling lucky today
+    let lucky_number = 7;
+    }
+    ```
+30. Unlike other languages, Rust will not auto convert a non-zero integer to a boolean value. 
+31. You do not need to put expressions in `()` when evaluating, ie:
+    ```rust
+    fn main() {
+    let number = 3;
+
+        if number != 0 {
+            println!("number was something other than zero");
+        }
+    }
+    ```
+32. Using too many `if else` statements in your code can clutter it, use `match` instead for these.
+33. You can use `if` in a let statement when defining a variable, ie: 
+    ```rust
+    fn main() {
+    let condition = true;
+    let number = if condition { 5 } else { 6 };
+
+    println!("The value of number is: {number}");
+    }
+    ```
+34. The potentially returned values from an `if` expression must the same type since the `let` type evaluates to the type of the last statement when compiled. 
+35. An if-expression without an else-branch always returns the unit type.
+36. Rust has three kinds of loops: loop, while, and for.
+37. `break` stops a loop and moves on to the next code.
+38. `continue` skips the remaining code in this loop iteration and starts the next iteration. 
+39. Just like expressions, you can return values from loops by adding the returned value after the `break` keyword followed by a `;`. 
+40. To break a specific loop, you can label a loop as such and break it as such:
+    ```rust
+    fn main() {
+        let mut count = 0;
+        'counting_up: loop {
+            println!("count = {count}");
+            let mut remaining = 10;
+
+            loop {
+                println!("remaining = {remaining}");
+                if remaining == 9 {
+                    break;
+                }
+                if count == 2 {
+                    break 'counting_up;
+                }
+                remaining -= 1;
+            }
+
+            count += 1;
+        }
+        println!("End count = {count}");
+    }
+    ```
+    The label must be prepended by a `'` (single-quote). 
+41. `loop` loops generally are intended to run for an unknown period of time, but `while` loops run until a condition is satisfied (which also may be an unknown period of time). ie: 
+    ```rust
+    fn main() {
+        let mut number = 3;
+
+        while number != 0 {
+            println!("{number}!");
+
+            number -= 1;
+        }
+
+        println!("LIFTOFF!!!");
+    }
+    ```
+42. When iterating over a collection, a `while` loop is possible, but the most efficient method is a `for` loop. ie: 
+    ```rust
+    fn main() {
+        let a = [10, 20, 30, 40, 50];
+
+        for element in a {
+            println!("the value is: {element}");
+        }
+    }
+    ```
+43. The syntax for a `for` loop is similar to python. `for *element* in *collection*`...
+44. When running a loop a specific number of times, it's still best to use a `for` loop. Using a `Range` value as it's itterable/collection is ideal, as such:
+    ```rust
+    fn main() {
+        for number in (1..4).rev() {
+            println!("{number}!");
+        }
+        println!("LIFTOFF!!!");
+    }
+    ```
+45. `Range` values can be generated using the following syntax:
+    ```rust
+    let r = (1..16) //[1, 2, 3, 4, 5 ... 16]
+    ```
+46. `.rev()` will reverse a range. 
+47. 
