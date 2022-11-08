@@ -1,6 +1,6 @@
 # Code
 
-#### Ownership & Functions
+#### Ownership and Functions
 ```rust
 fn main() {
     let s = String::from("hello");  // s comes into scope
@@ -26,14 +26,89 @@ fn makes_copy(some_integer: i32) { // some_integer comes into scope
     println!("{}", some_integer);
 } // Here, some_integer goes out of scope. Nothing special happens.
 ```
+#### Returning Values with Ownership
+```rust
+fn main() {
+    let s1 = gives_ownership();         // gives_ownership moves its return
+                                        // value into s1
+
+    let s2 = String::from("hello");     // s2 comes into scope
+
+    let s3 = takes_and_gives_back(s2);  // s2 is moved into
+                                        // takes_and_gives_back, which also
+                                        // moves its return value into s3
+} // Here, s3 goes out of scope and is dropped. s2 was moved, so nothing
+  // happens. s1 goes out of scope and is dropped.
+
+fn gives_ownership() -> String {             // gives_ownership will move its
+                                             // return value into the function
+                                             // that calls it
+
+    let some_string = String::from("yours"); // some_string comes into scope
+
+    some_string                              // some_string is returned and
+                                             // moves out to the calling
+                                             // function
+}
+
+// This function takes a String and returns one
+fn takes_and_gives_back(a_string: String) -> String { // a_string comes into
+                                                      // scope
+
+    a_string  // a_string is returned and moves out to the calling function
+}
+```
+
+#### Returning Tuples
+```rust
+fn main() {
+    let s1 = String::from("hello");
+
+    let (s2, len) = calculate_length(s1);
+
+    println!("The length of '{}' is {}.", s2, len);
+}
+
+fn calculate_length(s: String) -> (String, usize) {
+    let length = s.len(); // len() returns the length of a String
+
+    (s, length)
+}
+```
+
+#### Using References
+```rust
 
 
+fn main() {
+    let s1 = String::from("hello");
 
+    let len = calculate_length(&s1);
+
+    println!("The length of '{}' is {}.", s1, len);
+}
+
+fn calculate_length(s: &String) -> usize {
+    s.len()
+}
+```
+#### Mutable References
+```rust
+fn main() {
+    let mut s = String::from("hello");
+
+    change(&mut s);
+}
+
+fn change(some_string: &mut String) {
+    some_string.push_str(", world");
+}
+```
 
 # Notes
- 1. Ownership in Rust removes the need for garbage collection. It essentialyl promises the compiler that the memory will be dealt with. 
+ 1. Ownership in Rust removes the need for garbage collection. It essentialy promises the compiler that the memory will be dealt with. 
  2. Other languages -> Garbage collection, which regularly looks for no longer used memory. 
- 3. Rust commonly uses *stack* and *heap* in it's intended implementation.
+ 3. Rust commonly uses *stack* and *heap* methodology.
  4. *Stack* stores values in the order it gets them, ie: *last in, first out*. 
  5. Adding data to the stack is called *pushing into the stack*. Removing data is called *popping off the stack*. 
  6. All data stored on stack must have a known fixed size. 
@@ -105,3 +180,17 @@ println!("s1 = {}, s2 = {}", s1, s2);
     * The character type, char.
     * Tuples, if they only contain types that also implement Copy. For example, (i32, i32) implements Copy, but (i32, String) does not.
  27. When a non-scalar variable is passed to a functin, it's ownership changes to the function. If no value is returned from the function, the variable is essentialy *dropped* when the function ends. See [this code](#ownership-and-functions).
+ 28. When scalar variables, like an int, are passed to a function, it passes a copy. The original variable is still in scope when the function closes. 
+ 29. If you return a value from a function, you are passing ownership through the returned value. This can be seen [here](#returning-values-with-ownership).
+ 30. You can return *tuples* from functions as a way of returning the passed in value (ownership purposes) as well as a returned value. This can be seen [here](#returning-tuples).
+ 31. To use a value without transferring ownership, we use *references*. In C this is the *address of* operator, '&'. 
+ 32. *References* are great! We don't change ownership when we use a reference of a value. In [this](#using-references) code, we are creating a *String* (s1), passing a *reference* of it (`&s1`) to a function which paramenters are defined as taking a *reference* (`s: &String`), and returning a length of the String value at s1. 
+
+ ![reference-image](images/trpl04-05.svg)
+
+ 33. *Reference*s are just pointers to pointers basically. Used for passing values without changing ownership. 
+ 34. The opposite of *Referencing* with `&` is *Dereferencing* with `*`. This is discussed later, but I assume it's the same as C. 
+ 35. Creating a reference is more commonly known as *Borrowing*. 
+ 36. We can't modify something we are referencing, we can only reference it's value, unless we change it to a *mutable reference*. 
+ 37. Mutable references can be declared with the *mut* keyword following the '&', as shown [here](#mutable-references).
+ 38. 
