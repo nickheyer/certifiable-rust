@@ -105,6 +105,51 @@ fn change(some_string: &mut String) {
 }
 ```
 
+#### Error With Two References
+```rust
+    let mut s = String::from("hello");
+
+    let r1 = &mut s;
+    let r2 = &mut s;
+
+    println!("{}, {}", r1, r2);
+```
+#### Implicit Borrowing
+For example, mutable references can be moved by direct assignment:
+```rust
+[This code does not compile!] 
+fn main() {
+  let mut s = String::from("Hello world");
+  let s2 = &mut s;
+  let s3 = s2;
+  println!("{}", s2); // Not valid because s2 is moved
+}
+```
+But mutable references are not moved by function calls:
+```rust
+fn consume(_s: &mut String) {}
+fn main() {
+  let mut s = String::from("Hello world");
+  let s2 = &mut s;
+  consume(s2);
+  println!("{}", s2); // Valid because s2 is NOT moved
+}
+```
+
+#### Dangling References
+```rust
+fn main() {
+    let reference_to_nothing = dangle();
+}
+
+fn dangle() -> &String {
+    let s = String::from("hello");
+
+    &s
+}
+```
+
+
 # Notes
  1. Ownership in Rust removes the need for garbage collection. It essentialy promises the compiler that the memory will be dealt with. 
  2. Other languages -> Garbage collection, which regularly looks for no longer used memory. 
@@ -193,4 +238,37 @@ println!("s1 = {}, s2 = {}", s1, s2);
  35. Creating a reference is more commonly known as *Borrowing*. 
  36. We can't modify something we are referencing, we can only reference it's value, unless we change it to a *mutable reference*. 
  37. Mutable references can be declared with the *mut* keyword following the '&', as shown [here](#mutable-references).
- 38. 
+ 38. When a reference is made mutable, the value being referenced can be changed without changing ownership. 
+ 39. A mutable reference can only be borrowed once in scope. You will get an exception if you attempt to do it more than once. See [this code](#error-with-two-references).
+ 40. Rust prevents multiple mutable references to prevent *race cases* or *data race*. This occurs when two or more pointers are trying to access data at once, one pointer is being used to write, and no mechanism being used to sync access to the data, ie: a queue. 
+ 41. Multiple mutable references can be made, as long as they are not in the same scope, ie:
+ ```rust
+     let mut s = String::from("hello");
+
+    {
+        let r1 = &mut s;
+    } // r1 goes out of scope here, so we can make a new reference with no problems.
+
+    let r2 = &mut s;
+ ```
+ 42. Can't have both an immutable and mutable reference, referencing the same data in the same scope. 
+ 43. Multiple immuatable values are allowed because this won't affect race cases since the data can't be mutated anyways. 
+ 44. Technically a mutable and immutable ref can be in the same function if the immutable values are not used after the mutable reference is introduced, ie: 
+```rust
+    let mut s = String::from("hello");
+
+    let r1 = &s; // no problem
+    let r2 = &s; // no problem
+    println!("{} and {}", r1, r2);
+    // variables r1 and r2 will not be used after this point
+
+    let r3 = &mut s; // no problem
+    println!("{}", r3);
+```
+ 45. The compiler's ability to tell that a reference is no longer being used at a point before the end of the scope (like the above code) is called a *Non-Lexical Lifetimes* or *NLL* for short. 
+ 46. Mutable references can be moved from variable to variable by direct assignment, but not by function calls. Check [this code](#implicit-borrowing) out to see it in action. 
+ 47. Mutable references are not moved when passed to a function call because Rust automatically *reborrows* the reference when passed. 
+ 48. Dangling references are automatically not allowed at compile time. This can be seen [here](#dangling-references). <- This code would fail because the String s is dropped, but the reference to it is not, but instead passed to `reference_to_nothing`. 
+ 49. Slices let you reference a part of a sequence of elements, better known as a collection.
+ 50. Slices don't have ownership.
+ 51. 
